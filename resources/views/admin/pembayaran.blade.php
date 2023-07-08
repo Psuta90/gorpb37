@@ -69,7 +69,7 @@
                                     <a href="#" class="btn btn-success btn-circle btn-sm success" data-id="{{ $row->id }}">
                                         <i class="fas fa-check"></i>
                                     </a>
-                                    <form action="{{ route('admin.pembayaran.success', [$row->booking_id]) }}" method="POST" id="success-form{{$row->id}}">
+                                    <form action="{{ route('admin.pembayaran.success', [$row->booking_id,$row->jenis,$row->jam_mulai,$row->jam_habis]) }}" method="POST" id="success-form{{$row->id}}">
                                         @csrf
                                         @method('PATCH')
                                     </form>

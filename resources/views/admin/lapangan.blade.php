@@ -63,6 +63,7 @@
                             <th>Keterangan</th>
                             <th>Harga Siang / Jam</th>
                             <th>Harga Malam / Jam</th>
+                            <th>Harga Member / 30day</th>
                             <th>Foto 1</th>
                             <th>Foto 2</th>
                             <th>Foto 3</th>
@@ -76,6 +77,7 @@
                             <th>Keterangan</th>
                             <th>Harga Siang / Jam</th>
                             <th>Harga Malam / Jam</th>
+                            <th>Harga Member / 30day</th>
                             <th>Foto 1</th>
                             <th>Foto 2</th>
                             <th>Foto 3</th>
@@ -90,6 +92,7 @@
                                 <td>{{ $row->keterangan }}</td> 
                                 <td>Rp. {{ number_format($row->harga_siang) }}</td> 
                                 <td>Rp. {{ number_format($row->harga_malam) }}</td> 
+                                <td>Rp. {{ number_format($row->harga_member) }}</td> 
                                 <td>
                                     <a onclick="image1(this)" data-toggle="modal" data-image="{{ $row->foto1 }}" href="#imageModal">
                                         <img style="width: 50px; height: 30px;" src="{{ asset($row->foto1) }}" alt="{{ asset($row->foto1) }}">
@@ -110,7 +113,7 @@
                                     @endif
                                 </td> 
                                 <td>
-                                    <a href="#lapanganEditModal" data-toggle="modal" class="btn btn-info btn-circle btn-sm edit" data-id="{{ $row->id }}" data-lapangan_id="{{ $row->lapangan_id }}" data-nama="{{ $row->nama }}" data-keterangan="{{ $row->keterangan }}" data-harga_siang="Rp. {{ number_format($row->harga_siang) }}" data-harga_malam="Rp. {{ number_format($row->harga_malam) }}">
+                                    <a href="#lapanganEditModal" data-toggle="modal" class="btn btn-info btn-circle btn-sm edit" data-id="{{ $row->id }}" data-lapangan_id="{{ $row->lapangan_id }}" data-nama="{{ $row->nama }}" data-keterangan="{{ $row->keterangan }}" data-harga_siang="Rp. {{ number_format($row->harga_siang) }}" data-harga_malam="Rp. {{ number_format($row->harga_malam) }}" data-harga_member="Rp. {{ number_format($row->harga_member) }}">
                                         <i class="fas fa-pen"></i>
                                     </a>
                                     <a href="#" class="btn btn-danger btn-circle btn-sm delete" data-id="{{ $row->id }}">
@@ -180,6 +183,17 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <div class="mb-3 row">
+                            <label for="harga_member" class="col-sm-4 col-form-label">Harga Member / 30day</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control @error('harga_member') is-invalid @enderror" id="harga_member" name="harga_member" value="{{ old('harga_member') }}">
+                                @error('harga_malam')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="mb-3 row">
                             <label for="foto1" class="col-sm-4 col-form-label">Foto 1</label>
                             <div class="col-sm-8">
@@ -269,6 +283,17 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <div class="mb-3 row">
+                            <label for="edit_harga_member" class="col-sm-4 col-form-label">Harga Member / 30day</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control @error('edit_harga_member') is-invalid @enderror" id="edit_harga_member" name="edit_harga_member" value="{{ old('edit_harga_member') }}">
+                                @error('edit_harga_member')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div class="mb-3 row">
                             <label for="edit_foto1" class="col-sm-4 col-form-label">Foto 1</label>
                             <div class="col-sm-8">
@@ -344,6 +369,7 @@
             var keterangan = $(this).data('keterangan')
             var harga_siang = $(this).data('harga_siang')
             var harga_malam = $(this).data('harga_malam')
+            var harga_member = $(this).data('harga_member')
 
 
 
@@ -352,6 +378,7 @@
             $('#edit_keterangan').val(keterangan)
             $('#edit_harga_siang').val(harga_siang.replace(',', '.'))
             $('#edit_harga_malam').val(harga_malam.replace(',', '.'))
+            $('#edit_harga_member').val(harga_member.replace(',', '.'))
         })
 
         $(".delete").click(function () {
@@ -479,6 +506,32 @@
             return prefix == undefined ? rupiah2 : (rupiah2 ? 'Rp. ' + rupiah2 : '');
         }
 
+        var rupiah6= document.getElementById('harga_member');
+        rupiah6.addEventListener('keyup', function(e){
+            // tambahkan 'Rp.' pada saat form di ketik
+            // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+            rupiah6.value = formatRupiah(this.value, 'Rp. ');
+        });
+
+        /* Fungsi formatRupiah */
+        function formatRupiah(angka, prefix){
+            var number_string = angka.replace(/[^,\d]/g, '').toString(),
+            split   		= number_string.split(','),
+            sisa     		= split[0].length % 3,
+            rupiah6     		= split[0].substr(0, sisa),
+            ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+            // tambahkan titik jika yang di input sudah menjadi angka ribuan
+            if(ribuan){
+                separator = sisa ? '.' : '';
+                rupiah6 += separator + ribuan.join('.');
+            }
+
+            rupiah6 = split[1] != undefined ? rupiah6 + ',' + split[1] : rupiah6;
+            return prefix == undefined ? rupiah6 : (rupiah6 ? 'Rp. ' + rupiah6 : '');
+        }
+
+        
         var rupiah3 = document.getElementById('edit_harga_siang');
         rupiah3.addEventListener('keyup', function(e){
             // tambahkan 'Rp.' pada saat form di ketik
@@ -527,6 +580,32 @@
 
             rupiah4 = split[1] != undefined ? rupiah4 + ',' + split[1] : rupiah4;
             return prefix == undefined ? rupiah4 : (rupiah4 ? 'Rp. ' + rupiah4 : '');
+        }
+
+
+        var rupiah10= document.getElementById('edit_harga_member');
+        rupiah10.addEventListener('keyup', function(e){
+            // tambahkan 'Rp.' pada saat form di ketik
+            // gunakan fungsi formatRupiah() untuk mengubah angka yang di ketik menjadi format angka
+            rupiah10.value = formatRupiah(this.value, 'Rp. ');
+        });
+
+        /* Fungsi formatRupiah */
+        function formatRupiah(angka, prefix){
+            var number_string = angka.replace(/[^,\d]/g, '').toString(),
+            split   		= number_string.split(','),
+            sisa     		= split[0].length % 3,
+            rupiah10     		= split[0].substr(0, sisa),
+            ribuan     		= split[0].substr(sisa).match(/\d{3}/gi);
+
+            // tambahkan titik jika yang di input sudah menjadi angka ribuan
+            if(ribuan){
+                separator = sisa ? '.' : '';
+                rupiah10 += separator + ribuan.join('.');
+            }
+
+            rupiah10 = split[1] != undefined ? rupiah10 + ',' + split[1] : rupiah10;
+            return prefix == undefined ? rupiah10 : (rupiah10 ? 'Rp. ' + rupiah10 : '');
         }
     </script>
 

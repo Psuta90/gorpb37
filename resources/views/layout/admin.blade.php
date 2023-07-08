@@ -41,7 +41,7 @@
                 <div class="sidebar-brand-icon">
                     <i class="fas fa-futbol"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">GS Futsal</div>
+                <div class="sidebar-brand-text mx-3">GOR PB73</div>
             </a>
 
             <!-- Divider -->

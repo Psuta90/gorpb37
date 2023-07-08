@@ -25,7 +25,6 @@ class CreateUserBayarsTable extends Migration
             $table->softDeletes();
 
             $table->foreign('user_id')->references('user_id')->on('users');
-            $table->foreign('booking_id')->references('booking_id')->on('user__bookings');
         });
     }
 

@@ -15,7 +15,7 @@ class CreateUserBookingsTable extends Migration
     {
         Schema::create('user__bookings', function (Blueprint $table) {
             $table->id();
-            $table->string('booking_id')->unique();
+            $table->string('booking_id');
             $table->string('user_id');
             $table->string('lapangan_id');
             $table->string('tanggal');

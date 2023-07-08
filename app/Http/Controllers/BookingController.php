@@ -39,119 +39,255 @@ class BookingController extends Controller
     public function bookingStore(Request $request)
     {
         if (Auth::check()) {
-            $request->validate([
-                'jenis' => 'required',
-                'tanggal_pesan' => 'required',
-                'jam_mulai' => 'required',
-                'lama_bermain' => 'required',
-            ]);
 
-            // dump(date('Y-m-d', strtotime($request->tanggal_pesan)));
-            // dd(date('Y-m-d'));
+            if ($request->jenis == "Member") {
+                $request->validate([
+                    'jenis' => 'required',
+                    'tanggal_pesan' => 'required',
+                    'jam_mulai' => 'required',
+                    'lama_bermain' => 'required',
+                ]);
 
-            $tanggal_sekrang = date('Y-m-d');
-            $tanggal_pesan = date('Y-m-d', strtotime($request->tanggal_pesan));
-            if ($tanggal_sekrang > $tanggal_pesan) {
-                return redirect()->back()->with('message_fail', 'Tanggal sudah lewat!');
-            }
+                $tanggal_sekrang = date('Y-m-d');
+                $tanggal_pesan = date('Y-m-d', strtotime($request->tanggal_pesan));
 
-            $lama_bermain = explode(':', $request->jam_mulai);
-            $selesai_bermain = array(0 => (string) $lama_bermain[0] + $request->lama_bermain);
-            $jam_awal = implode(':', $lama_bermain);
-            $jam_habis = implode(':', array_replace($lama_bermain, $selesai_bermain));
-
-            $jam_sekarang = date('H:i');
-            $jam_pesan = date('H:i', strtotime($request->jam_mulai));
-            // dump($jam_sekarang);
-            // dd($jam_pesan);
-            $jam_buka = date('H:i', strtotime('08:00'));
-            $jam_tutup = date('H:i', strtotime('23:59'));
-
-            if ($jam_pesan < $jam_buka) {
-                return redirect()->back()->with('message_fail', 'GS Futsal belum buka!');
-            }
-            if ($jam_pesan > $jam_tutup && $jam_habis > $jam_tutup) {
-                return redirect()->back()->with('message_fail', 'GS Futsal sudah tutup!');
-            }
-
-            if  ( $tanggal_sekrang == $tanggal_pesan ) {
-                if ($jam_sekarang > $jam_pesan) {
-                    return redirect()->back()->with('message_fail', 'Jam sudah lewat!');
+                if ($tanggal_sekrang > $tanggal_pesan) {
+                    return redirect()->back()->with('message_fail', 'Tanggal sudah lewat!');
                 }
-            }
 
-            $user_booking = User_Booking::withTrashed()->orderBy('id', 'DESC')->first();
-            // dd($user_booking);
-            if ($user_booking == Null) {
-                $booking_id = 'BF0001';
-            } else {
-                $numRow = $user_booking->id + 1;
+                $lama_bermain = explode(':', $request->jam_mulai);
+                $selesai_bermain = array(0 => (string) $lama_bermain[0] + $request->lama_bermain);
+                $jam_awal = implode(':', $lama_bermain);
+                $jam_habis = implode(':', array_replace($lama_bermain, $selesai_bermain));
 
-                if ($numRow < 10) {
-                    $booking_id = 'BF' . '000' . $numRow;
-                } elseif ($numRow >= 10 && $numRow <= 99) {
-                    $booking_id = 'BF' . '00' . $numRow;
-                } elseif ($numRow >= 100 && $numRow <= 999) {
-                    $booking_id = 'BF' . '0' . $numRow;
-                } elseif ($numRow >= 1000 && $numRow <= 9999) {
-                    $booking_id = 'BF' . $numRow;
+                $jam_sekarang = date('H:i');
+                $jam_pesan = date('H:i', strtotime($request->jam_mulai));
+                // dump($jam_sekarang);
+                // dd($jam_pesan);
+                $jam_buka = date('H:i', strtotime('08:00'));
+                $jam_tutup = date('H:i', strtotime('23:59'));
+
+                if ($jam_pesan < $jam_buka) {
+                    return redirect()->back()->with('message_fail', 'GS Futsal belum buka!');
                 }
-            }
-
-            // dd($booking_id);
-
-            $user = User::where('email', Auth::user()->email)
-                ->first();
-
-            $user_id = $user->user_id;
-
-            $check_time_1 = User_Booking::where('lapangan_id', $request->lapangan_id)
-                ->whereDate('tanggal', $request->tanggal_pesan)
-                ->get();
-
-            foreach ($check_time_1 as $row) {
-                $waktu_awal_db = date('H:i', strtotime($row->jam_mulai));
-                $waktu_awal = date('H:i', strtotime($jam_awal));
-                $waktu_akhir = date('H:i', strtotime($jam_habis));
-
-                if ($waktu_awal < $waktu_awal_db && $waktu_akhir > $waktu_awal_db) {
-                    return redirect()->back()->with('message_fail', 'Jam sudah terpesan di jam ' . $waktu_awal_db . '!');
+                if ($jam_pesan > $jam_tutup && $jam_habis > $jam_tutup) {
+                    return redirect()->back()->with('message_fail', 'GS Futsal sudah tutup!');
                 }
+
+                if  ( $tanggal_sekrang == $tanggal_pesan ) {
+                    if ($jam_sekarang > $jam_pesan) {
+                        return redirect()->back()->with('message_fail', 'Jam sudah lewat!');
+                    }
+                }
+
+                // dd($booking_id);
+
+                $user = User::where('email', Auth::user()->email)
+                    ->first();
+
+                $user_id = $user->user_id;
+
+                $check_time_1 = User_Booking::where('lapangan_id', $request->lapangan_id)
+                    ->whereDate('tanggal', $request->tanggal_pesan)
+                    ->get();
+
+                foreach ($check_time_1 as $row) {
+                    $waktu_awal_db = date('H:i', strtotime($row->jam_mulai));
+                    $waktu_awal = date('H:i', strtotime($jam_awal));
+                    $waktu_akhir = date('H:i', strtotime($jam_habis));
+
+                    if ($waktu_awal < $waktu_awal_db && $waktu_akhir > $waktu_awal_db) {
+                        return redirect()->back()->with('message_fail', 'Jam sudah terpesan di jam ' . $waktu_awal_db . '!');
+                    }
+                }
+
+                $check = User_Booking::where('lapangan_id', $request->lapangan_id)
+                    ->whereDate('tanggal', $request->tanggal_pesan)
+                    ->whereTime('jam_mulai', '<=', $jam_awal)
+                    ->whereTime('jam_habis', '>=', $jam_awal);
+
+                $check_data = $check->count();
+                $check_time = $check->first();
+
+                if ($check_data == 1) {
+                    return redirect()->back()->with('message_fail', 'Jam sudah ada yang pesan, dari jam ' . $check_time->jam_mulai . '-' . $check_time->jam_habis . '!');
+                }
+
+                $harga = str_replace('Rp. ', '', $request->harga);
+                $total = str_replace('Rp. ', '', $request->total_harga);
+
+                $harga_lapangan = str_replace('.', '', $harga);
+                $harga_total = str_replace('.', '', $total);
+
+                // Mendapatkan bulan dan tahun dari tanggal awal
+                $bulanAwal = date('m', strtotime($tanggal_pesan));
+                $tahunAwal = date('Y', strtotime($tanggal_pesan));
+
+                // Menghitung tanggal satu bulan ke depan
+                $bulanSelanjutnya = date('m', strtotime('+1 month', strtotime($tanggal_pesan)));
+                $tahunSelanjutnya = date('Y', strtotime('+1 month', strtotime($tanggal_pesan)));
+
+                // Loop melalui setiap tanggal dalam bulan selanjutnya
+                for ($tanggalSelanjutnya = 1; $tanggalSelanjutnya <= 31; $tanggalSelanjutnya++) {
+                    $tanggalIni = date('Y-m-d', strtotime($tahunSelanjutnya . '-' . $bulanSelanjutnya . '-' . $tanggalSelanjutnya));
+                    $hariIni = date('N', strtotime($tanggalIni));
+
+                    // Cek apakah hari ini sama dengan hari pada tanggal awal
+                    if ($hariIni == date('N', strtotime($tanggal_pesan))) {
+                        
+                        $user_booking = User_Booking::withTrashed()->orderBy('id', 'DESC')->first();
+                        
+                        if ($user_booking == Null) {
+                            $booking_id = 'BF0001';
+                        } else {
+                            $numRow = $user_booking->id + 1;
+        
+                            if ($numRow < 10) {
+                                $booking_id = 'BF' . '000' . $numRow;
+                            } elseif ($numRow >= 10 && $numRow <= 99) {
+                                $booking_id = 'BF' . '00' . $numRow;
+                            } elseif ($numRow >= 100 && $numRow <= 999) {
+                                $booking_id = 'BF' . '0' . $numRow;
+                            } elseif ($numRow >= 1000 && $numRow <= 9999) {
+                                $booking_id = 'BF' . $numRow;
+                            }
+                        }
+
+                        User_Booking::create([
+                            'booking_id' => $booking_id,
+                            'user_id' => $user_id,
+                            'lapangan_id' => $request->lapangan_id,
+                            'tanggal' => $tanggalIni,
+                            'lama_mulai' => $request->lama_bermain . " Jam",
+                            'jam_mulai' => $jam_awal,
+                            'jam_habis' => $jam_habis,
+                            'jenis' => $request->jenis,
+                            'harga_lapangan' => $harga_lapangan,
+                            'total' => $harga_total,
+                            'status' => 'Belum Bayar',
+                        ]);
+                    }
+                }
+
+                return redirect()->route('dashboard')->with('message_success', 'Booking berhasil, silahkan lakukan pembayaran 1x24 Jam.');
+
+
+
+            }else {
+                $request->validate([
+                    'jenis' => 'required',
+                    'tanggal_pesan' => 'required',
+                    'jam_mulai' => 'required',
+                    'lama_bermain' => 'required',
+                ]);
+
+            
+                $tanggal_sekrang = date('Y-m-d');
+                $tanggal_pesan = date('Y-m-d', strtotime($request->tanggal_pesan));
+
+                if ($tanggal_sekrang > $tanggal_pesan) {
+                    return redirect()->back()->with('message_fail', 'Tanggal sudah lewat!');
+                }
+
+                $lama_bermain = explode(':', $request->jam_mulai);
+                $selesai_bermain = array(0 => (string) $lama_bermain[0] + $request->lama_bermain);
+                $jam_awal = implode(':', $lama_bermain);
+                $jam_habis = implode(':', array_replace($lama_bermain, $selesai_bermain));
+
+                $jam_sekarang = date('H:i');
+                $jam_pesan = date('H:i', strtotime($request->jam_mulai));
+                // dump($jam_sekarang);
+                // dd($jam_pesan);
+                $jam_buka = date('H:i', strtotime('08:00'));
+                $jam_tutup = date('H:i', strtotime('23:59'));
+
+                if ($jam_pesan < $jam_buka) {
+                    return redirect()->back()->with('message_fail', 'GS Futsal belum buka!');
+                }
+                if ($jam_pesan > $jam_tutup && $jam_habis > $jam_tutup) {
+                    return redirect()->back()->with('message_fail', 'GS Futsal sudah tutup!');
+                }
+
+                if  ( $tanggal_sekrang == $tanggal_pesan ) {
+                    if ($jam_sekarang > $jam_pesan) {
+                        return redirect()->back()->with('message_fail', 'Jam sudah lewat!');
+                    }
+                }
+
+                $user_booking = User_Booking::withTrashed()->orderBy('id', 'DESC')->first();
+                // dd($user_booking);
+                if ($user_booking == Null) {
+                    $booking_id = 'BF0001';
+                } else {
+                    $numRow = $user_booking->id + 1;
+
+                    if ($numRow < 10) {
+                        $booking_id = 'BF' . '000' . $numRow;
+                    } elseif ($numRow >= 10 && $numRow <= 99) {
+                        $booking_id = 'BF' . '00' . $numRow;
+                    } elseif ($numRow >= 100 && $numRow <= 999) {
+                        $booking_id = 'BF' . '0' . $numRow;
+                    } elseif ($numRow >= 1000 && $numRow <= 9999) {
+                        $booking_id = 'BF' . $numRow;
+                    }
+                }
+
+                // dd($booking_id);
+
+                $user = User::where('email', Auth::user()->email)
+                    ->first();
+
+                $user_id = $user->user_id;
+
+                $check_time_1 = User_Booking::where('lapangan_id', $request->lapangan_id)
+                    ->whereDate('tanggal', $request->tanggal_pesan)
+                    ->get();
+
+                foreach ($check_time_1 as $row) {
+                    $waktu_awal_db = date('H:i', strtotime($row->jam_mulai));
+                    $waktu_awal = date('H:i', strtotime($jam_awal));
+                    $waktu_akhir = date('H:i', strtotime($jam_habis));
+
+                    if ($waktu_awal < $waktu_awal_db && $waktu_akhir > $waktu_awal_db) {
+                        return redirect()->back()->with('message_fail', 'Jam sudah terpesan di jam ' . $waktu_awal_db . '!');
+                    }
+                }
+
+                $check = User_Booking::where('lapangan_id', $request->lapangan_id)
+                    ->whereDate('tanggal', $request->tanggal_pesan)
+                    ->whereTime('jam_mulai', '<=', $jam_awal)
+                    ->whereTime('jam_habis', '>=', $jam_awal);
+
+                $check_data = $check->count();
+                $check_time = $check->first();
+
+                if ($check_data == 1) {
+                    return redirect()->back()->with('message_fail', 'Jam sudah ada yang pesan, dari jam ' . $check_time->jam_mulai . '-' . $check_time->jam_habis . '!');
+                }
+
+                $harga = str_replace('Rp. ', '', $request->harga);
+                $total = str_replace('Rp. ', '', $request->total_harga);
+
+                $harga_lapangan = str_replace('.', '', $harga);
+                $harga_total = str_replace('.', '', $total);
+
+                User_Booking::create([
+                    'booking_id' => $booking_id,
+                    'user_id' => $user_id,
+                    'lapangan_id' => $request->lapangan_id,
+                    'tanggal' => $request->tanggal_pesan,
+                    'lama_mulai' => $request->lama_bermain . " Jam",
+                    'jam_mulai' => $jam_awal,
+                    'jam_habis' => $jam_habis,
+                    'jenis' => $request->jenis,
+                    'harga_lapangan' => $harga_lapangan,
+                    'total' => $harga_total,
+                    'status' => 'Belum Bayar',
+                ]);
+
+                return redirect()->route('dashboard')->with('message_success', 'Booking berhasil, silahkan lakukan pembayaran 1x24 Jam.');
             }
 
-            $check = User_Booking::where('lapangan_id', $request->lapangan_id)
-                ->whereDate('tanggal', $request->tanggal_pesan)
-                ->whereTime('jam_mulai', '<=', $jam_awal)
-                ->whereTime('jam_habis', '>=', $jam_awal);
-
-            $check_data = $check->count();
-            $check_time = $check->first();
-
-            if ($check_data == 1) {
-                return redirect()->back()->with('message_fail', 'Jam sudah ada yang pesan, dari jam ' . $check_time->jam_mulai . '-' . $check_time->jam_habis . '!');
-            }
-
-            $harga = str_replace('Rp. ', '', $request->harga);
-            $total = str_replace('Rp. ', '', $request->total_harga);
-
-            $harga_lapangan = str_replace('.', '', $harga);
-            $harga_total = str_replace('.', '', $total);
-
-            User_Booking::create([
-                'booking_id' => $booking_id,
-                'user_id' => $user_id,
-                'lapangan_id' => $request->lapangan_id,
-                'tanggal' => $request->tanggal_pesan,
-                'lama_mulai' => $request->lama_bermain . " Jam",
-                'jam_mulai' => $jam_awal,
-                'jam_habis' => $jam_habis,
-                'jenis' => $request->jenis,
-                'harga_lapangan' => $harga_lapangan,
-                'total' => $harga_total,
-                'status' => 'Belum Bayar',
-            ]);
-
-            return redirect()->route('dashboard')->with('message_success', 'Booking berhasil, silahkan lakukan pembayaran 1x24 Jam.');
         } else {
             return redirect()->route('masuk');
         }

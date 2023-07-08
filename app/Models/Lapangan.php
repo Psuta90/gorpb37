@@ -16,6 +16,7 @@ class Lapangan extends Model
         'keterangan',
         'harga_siang',
         'harga_malam',
+        'harga_member',
         'foto1',
         'foto2',
         'foto3',

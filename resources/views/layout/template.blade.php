@@ -83,7 +83,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 	</div>
 
 	
-	 <div class="header @yield('header5')">
+	 <!-- <div class="header @yield('header5')">
 		<div class="header-top">
 
 			<div class="header-bottom">
@@ -112,12 +112,12 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				</div>
 				<div class="clearfix"> </div>
 			</div>
-		</div> 
+		</div>  -->
 
 
-		<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-warning ">
 		<div class="logo">
-						<h1><a href="/">GOR<span>PB73</span></a></h1>
+			<h1><a href="/">GOR<span>PB73</span></a></h1>
 		</div>
 		
 		<div class="container-fluid">
@@ -135,24 +135,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			</button>
 
 			
-			<div
-			class="collapse navbar-collapse justify-content-center"
-			id="navbarCenteredExample"
-			>
+			<div class="collapse navbar-collapse justify-content-end" id="navbarCenteredExample">
 			
 			<ul class="navbar-nav mb-2 mb-lg-0">
-				<li class="nav-item">
-				<a class="nav-link active" aria-current="page" href="#">Home</a>
-				</li>
-				<li class="nav-item">
-				<a class="nav-link" href="#">Link</a>
-				</li>
-
-				<li class="nav-item @yield('active-home')"><a class="nav-link text-lg" href="{{ route('index') }}">Home</a></li>
-				<li class="nav-item @yield('active-tentang')" ><a class="nav-link text-lg" href="{{ route('tentang') }}">Tentang</a></li>
-				<li class="nav-item @yield('active-cara-pemesanan')" ><a class="nav-link text-lg" href="{{ route('cara-pemesanan') }}">Cara Pemesanan</a></li>
-				<li class="nav-item @yield('active-booking')" ><a class="nav-link text-lg" href="{{ route('booking') }}">Pesan</a></li>
-				<li class="nav-item @yield('active-jadwal')" ><a class="nav-link text-lg" href="{{ route('jadwal') }}">Jadwal</a></li>
+				<li class="nav-item @yield('active-home')"><a class="nav-link h4 " href="{{ route('index') }}">Home</a></li>
+				<li class="nav-item @yield('active-tentang')" ><a class="nav-link h4 " href="{{ route('tentang') }}">Tentang</a></li>
+				<li class="nav-item @yield('active-cara-pemesanan')" ><a class="nav-link h4 " href="{{ route('cara-pemesanan') }}">Cara Pemesanan</a></li>
+				<li class="nav-item @yield('active-booking')" ><a class="nav-link h4 " href="{{ route('booking') }}">Pesan</a></li>
+				<li class="nav-item @yield('active-jadwal')" ><a class="nav-link h4 " href="{{ route('jadwal') }}">Jadwal</a></li>
 
 				@if (Auth::check())
 					<li class="@yield('active-dashboard')" class="grid"><a href="{{ route('dashboard') }}">Dashboard</a></li>
@@ -164,13 +154,37 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		</div>
 		
 		</nav> -->
-
+		
+		<!-- Navbar -->
+		<nav class="navbar navbar-expand-lg navbar-light bg-warning">
+		<div class="logo">
+			<h1><a href="/">GOR<span>PB73</span></a></h1>
+		</div>
+    <div class="container-fluid">
+      <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
+        data-mdb-target="#navbarExample01" aria-controls="navbarExample01" aria-expanded="false"
+        aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarExample01">
+	  <ul class="navbar-nav mb-2 mb-lg-0">
+				<li class="nav-item @yield('active-home')"><a class="nav-link h4 " href="{{ route('index') }}">Home</a></li>
+				<li class="nav-item @yield('active-tentang')" ><a class="nav-link h4 " href="{{ route('tentang') }}">Tentang</a></li>
+				<li class="nav-item @yield('active-cara-pemesanan')" ><a class="nav-link h4 " href="{{ route('cara-pemesanan') }}">Cara Pemesanan</a></li>
+				<li class="nav-item @yield('active-booking')" ><a class="nav-link h4 " href="{{ route('booking') }}">Pesan</a></li>
+				<li class="nav-item @yield('active-jadwal')" ><a class="nav-link h4 " href="{{ route('jadwal') }}">Jadwal</a></li>
+				@if (Auth::check())
+					<li class="@yield('active-dashboard') nav-item"><a class="nav-link h4" href="{{ route('dashboard') }}">Dashboard</a></li>
+				@endif
+		</ul>
+      </div>
+    </div>
+  </nav>
+  <!-- Navbar -->
         @yield('content-header')
 
 		<div class="clearfix"> </div>
 	</div>
-	<!---->
-	<!---->
 
     @yield('content')
 	

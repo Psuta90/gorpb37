@@ -209,6 +209,7 @@ class AdminController extends Controller
             'keterangan' => 'required',
             'harga_siang' => 'required',
             'harga_malam' => 'required',
+            'harga_member' => 'required',
             'foto1' => 'required|file|mimes:png,jpg,jpeg',
             'foto2' => 'file|mimes:png,jpg,jpeg',
             'foto3' => 'file|mimes:png,jpg,jpeg',
@@ -234,9 +235,11 @@ class AdminController extends Controller
 
         $p_siang = str_replace('Rp. ', '', $request->harga_siang);
         $p_malam = str_replace('Rp. ', '', $request->harga_malam);
+        $p_member = str_replace('Rp. ', '', $request->harga_member);
 
         $siang = str_replace('.', '', $p_siang);
         $malam = str_replace('.', '', $p_malam);
+        $member = str_replace('.', '', $p_member);
 
         // File Upload
         // File 1
@@ -283,6 +286,7 @@ class AdminController extends Controller
             'keterangan' => $request->keterangan,
             'harga_siang' => $siang,
             'harga_malam' => $malam,
+            'harga_member' => $member,
             'foto1' => $fileLocation1,
             'foto2' => $fileLocation2,
             'foto3' => $fileLocation3,
@@ -300,6 +304,7 @@ class AdminController extends Controller
             'edit_keterangan' => 'required',
             'edit_harga_siang' => 'required',
             'edit_harga_malam' => 'required',
+            'edit_harga_member' => 'required',
             'edit_foto1' => 'file|mimes:png,jpg,jpeg',
             'edit_foto2' => 'file|mimes:png,jpg,jpeg',
             'edit_foto3' => 'file|mimes:png,jpg,jpeg',
@@ -329,9 +334,11 @@ class AdminController extends Controller
 
         $p_siang = str_replace('Rp. ', '', $request->edit_harga_siang);
         $p_malam = str_replace('Rp. ', '', $request->edit_harga_malam);
+        $p_member = str_replace('Rp. ', '', $request->edit_harga_member);
 
         $siang = str_replace('.', '', $p_siang);
         $malam = str_replace('.', '', $p_malam);
+        $member = str_replace('.', '', $p_member);
 
         Lapangan::where('lapangan_id', $request->lapangan_id)
             ->update([
@@ -339,6 +346,7 @@ class AdminController extends Controller
                 'keterangan' => $request->edit_keterangan,
                 'harga_siang' => $siang,
                 'harga_malam' => $malam,
+                'harga_member' => $member,
                 'foto1' => $fileLocation1,
                 'foto2' => $fileLocation2,
                 'foto3' => $fileLocation3,

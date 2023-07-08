@@ -61,10 +61,15 @@
 											<td style="padding: 0 5px;">:</td>
 											<td>Rp. {{ number_format($row->harga_malam) }}</td>
 										</tr>
+										<tr>
+											<td style="font-weight: 600;">Harga Member / 30day</td>
+											<td style="padding: 0 5px;">:</td>
+											<td>Rp. {{ number_format($row->harga_member) }}</td>
+										</tr>
 									</table>
 
 									<div style="padding: 25px 0 10px">
-										<a data-toggle="modal" href="#pesanModal" id="pesan" data-lapangan_id="{{ $row->lapangan_id }}" data-nama="{{ $row->nama }}" data-harga_siang="{{ $row->harga_siang }}" data-harga_malam="{{ $row->harga_malam }}"><span style="padding: 10px 30px !important;" class="label label-primary">Pesan</span></a>
+										<a data-toggle="modal" href="#pesanModal" id="pesan" data-lapangan_id="{{ $row->lapangan_id }}" data-nama="{{ $row->nama }}" data-harga_siang="{{ $row->harga_siang }}" data-harga_malam="{{ $row->harga_malam }}" data-harga_member="{{ $row->harga_member }}" ><span style="padding: 10px 30px !important;" class="label label-primary">Pesan</span></a>
 									</div>
 								</div>
 							</div>
@@ -80,6 +85,7 @@
 								<th>Keterangan</th>
 								<th>Harga Siang / Jam</th>
 								<th>Harga Malam / Jam</th>
+								<th>Harga Member / 30day</th>
 								<th>Foto 1</th>
 								<th>Foto 2</th>
 								<th>Foto 3</th>
@@ -95,6 +101,7 @@
 									<td>{{ $row->keterangan }}</td> 
 									<td>Rp. {{ number_format($row->harga_siang) }}</td> 
 									<td>Rp. {{ number_format($row->harga_malam) }}</td> 
+									<td>Rp. {{ number_format($row->harga_member) }}</td> 
 									<td>
 										<a onclick="image1(this)" data-toggle="modal" data-image="{{ $row->foto1 }}" href="#imageModal">
 											<img style="width: 50px; height: 30px;" src="{{ asset($row->foto1) }}" alt="{{ asset($row->foto1) }}">
@@ -116,7 +123,7 @@
 									</td> 
 									<td>
 										<a href="{{ route('booking.jadwal', [$row->lapangan_id]) }}"><span class="label label-default">Jadwal</span></a>
-										<a data-toggle="modal" href="#pesanModal" id="pesan" data-lapangan_id="{{ $row->lapangan_id }}" data-harga_siang="{{ $row->harga_siang }}" data-harga_malam="{{ $row->harga_malam }}"><span class="label label-primary">Pesan</span></a>
+										<a data-toggle="modal" href="#pesanModal" id="pesan" data-lapangan_id="{{ $row->lapangan_id }}" data-harga_siang="{{ $row->harga_siang }}" data-harga_malam="{{ $row->harga_malam }}" data-harga_member="{{ $row->harga_member }}"><span class="label label-primary">Pesan</span></a>
 									</td>
 								</tr>
 							@endforeach
@@ -155,14 +162,22 @@
 											<option value="">-- Waktu --</option>
 											<option value="Siang" selected>Siang</option>
 											<option value="Malam">Malam</option>
+											<option value="Member" selected>Member</option>
 										@elseif ( old('jenis') == 'Malam' )
 											<option value="">-- Waktu --</option>
 											<option value="Siang">Siang</option>
 											<option value="Malam" selected>Malam</option>
+											<option value="Member" selected>Member</option>
+										@elseif ( old('jenis') == 'Member' )
+											<option value="">-- Waktu --</option>
+											<option value="Siang">Siang</option>
+											<option value="Malam" selected>Malam</option>
+											<option value="Member" selected>Member</option>
 										@else
 											<option value="">-- Waktu --</option>
 											<option value="Siang">Siang</option>
 											<option value="Malam">Malam</option>
+											<option value="Member">Member</option>
 										@endif
 									</select>
 									@error('jenis')
@@ -176,21 +191,21 @@
 										<div class="invalid-feedback">{{ $message }}</div>
 									@enderror
 								</div>
-								<div>
+								<div class="" >
 									<span>Tanggal Pesan</span>
 									<input type="date" class="input @error('tanggal_pesan') is-invalid @enderror" value="{{ old('tanggal_pesan') }}" name="tanggal_pesan">
 									@error('tanggal_pesan')
 										<div class="invalid-feedback">{{ $message }}</div>
 									@enderror
 								</div>
-								<div>
+								<div class="" >
 									<span>Jam Mulai</span>
 									<input type="time" class="input @error('jam_mulai') is-invalid @enderror" value="{{ old('jam_mulai') }}" name="jam_mulai">
 									@error('jam_mulai')
 										<div class="invalid-feedback">{{ $message }}</div>
 									@enderror
 								</div>
-								<div class="pesan-form">
+								<div class="pesan-form "  >
 									<span>Lama Bermain / Jam</span>
 									<input type="number" min="1" max="10" class="input @error('lama_bermain') is-invalid @enderror" value="{{ old('lama_bermain') }}" id="lama_bermain" name="lama_bermain">
 									@error('lama_bermain')
@@ -249,11 +264,13 @@
 			var nama = $(this).data('nama')
 			var harga_siang = $(this).data('harga_siang')
 			var harga_malam = $(this).data('harga_malam')
+			var harga_member = $(this).data('harga_member')
 
 			$('#lapangan_id').val(lapangan_id)
 			$('#exampleModalLabel').text('Pesan ' + nama)
 			$(function () {
 				$('#jenis').change(function () {
+
 					var displayHarga = $('#jenis option:selected').val();
 					if (displayHarga == 'Siang') {
 						var harga = harga_siang
@@ -310,7 +327,7 @@
 
 							$('#total_harga').val("Rp. " + rupiah)
 						})
-						
+						$('.hidden').removeClass("hidden")
 					} else if (displayHarga == 'Malam') {
 						var harga = harga_malam
 						
@@ -366,6 +383,24 @@
 
 							$('#total_harga').val("Rp. " + rupiah)
 						})
+						$('.hidden').removeClass("hidden")
+					}else if (displayHarga == 'Member') {
+						var harga = harga_member
+						
+						var number_string 	= harga.toString(),
+						sisa  				= number_string.length % 3,
+						rupiah				= number_string.substr(0, sisa),
+						ribuan				= number_string.substr(sisa).match(/\d{3}/gi)
+						
+						if (ribuan) {
+							separator = sisa ? '.' : ''
+							rupiah += separator + ribuan.join('.')
+						}
+						$('#harga').val("Rp. " + rupiah)
+						$('#total_harga').val("Rp. " + rupiah)
+
+						$('.member_hidden').addClass("hidden")
+						
 					}
 				})
 			})

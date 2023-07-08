@@ -62,6 +62,9 @@ Route::group(['admin'], function () {
         
         Route::get('/admin/user', [AdminController::class, 'user'])->name('admin.user');
         Route::patch('/admin/user/delete/{id}', [AdminController::class, 'userDelete'])->name('admin.user.delete');
+
+        Route::get('/admin/user', [AdminController::class, 'user'])->name('admin.user');
+        Route::patch('/admin/user/delete/{id}', [AdminController::class, 'userDelete'])->name('admin.user.delete');
         
         Route::get('/admin/pembayaran', [AdminController::class, 'pembayaran'])->name('admin.pembayaran');
         Route::patch('/admin/pembayaran/success/{booking_id}', [AdminController::class, 'pembayaranSuccess'])->name('admin.pembayaran.success');

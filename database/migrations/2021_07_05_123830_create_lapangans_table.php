@@ -20,6 +20,7 @@ class CreateLapangansTable extends Migration
             $table->text('keterangan');
             $table->string('harga_siang');
             $table->string('harga_malam');
+            $table->string('harga_member');
             $table->string('foto1');
             $table->string('foto2')->nullable();
             $table->string('foto3')->nullable();
