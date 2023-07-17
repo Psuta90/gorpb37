@@ -363,9 +363,24 @@
 							$('#total_harga').val("Rp. " + rupiah)
 						})
 						
+						
+						$('.hidden').removeClass("hidden")
+					}else if (displayHarga == 'Member') {
+						var harga = harga_member
+						
+						var number_string 	= harga.toString(),
+						sisa  				= number_string.length % 3,
+						rupiah				= number_string.substr(0, sisa),
+						ribuan				= number_string.substr(sisa).match(/\d{3}/gi)
+						
+						if (ribuan) {
+							separator = sisa ? '.' : ''
+							rupiah += separator + ribuan.join('.')
+						}
+
 						$('#lama_bermain').keyup(function () {
 							var total = 0
-							var x = harga_malam
+							var x = harga_member
 							var y = Number($('#lama_bermain').val())
 							var total = x * y
 
@@ -383,19 +398,7 @@
 
 							$('#total_harga').val("Rp. " + rupiah)
 						})
-						$('.hidden').removeClass("hidden")
-					}else if (displayHarga == 'Member') {
-						var harga = harga_member
-						
-						var number_string 	= harga.toString(),
-						sisa  				= number_string.length % 3,
-						rupiah				= number_string.substr(0, sisa),
-						ribuan				= number_string.substr(sisa).match(/\d{3}/gi)
-						
-						if (ribuan) {
-							separator = sisa ? '.' : ''
-							rupiah += separator + ribuan.join('.')
-						}
+
 						$('#harga').val("Rp. " + rupiah)
 						$('#total_harga').val("Rp. " + rupiah)
 
